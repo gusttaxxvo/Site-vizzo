@@ -13,5 +13,8 @@ export default defineConfig({
       "@assets": path.resolve(__dirname, './src/assets'),
       "@services": path.resolve(__dirname, './src/services')
     }
+  },
+  preview: {
+    allowedHosts: ['vizzo-site.onrender.com']
   }
 })
