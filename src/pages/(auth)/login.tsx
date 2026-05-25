@@ -1,132 +1,237 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/services/supabaseClient";
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { CoresVizzo } from '../../theme';
+import { supabase } from '../../services/supabaseClient'; // Garanta a importação do seu cliente supabase
+
+const ScreenContainer = styled.div`
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: ${CoresVizzo.background};
+  overflow: hidden;
+`;
+
+const VisualSide = styled.div`
+  flex: 1;
+  background: linear-gradient(135deg, #1a1d1d 0%, #0f1111 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px;
+  position: relative;
+  border-right: 1px solid ${CoresVizzo.inputBorder};
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+
+const BrandTitle = styled.h1`
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -2px;
+  span { color: ${CoresVizzo.brandOrange}; }
+`;
+
+const BrandDescription = styled.p`
+  color: ${CoresVizzo.textSecondary};
+  font-size: 1.15rem;
+  line-height: 1.6;
+  max-width: 460px;
+  margin-top: 16px;
+`;
+
+const FormSide = styled.div`
+  width: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${CoresVizzo.background};
+  padding: 40px;
+  @media (max-width: 900px) { width: 100%; }
+`;
+
+const FormCard = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background-color: ${CoresVizzo.cardBackground};
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border-top: 6px solid ${CoresVizzo.brandOrange};
+`;
+
+const HeaderContainer = styled.div`
+  margin-bottom: 6px;
+  h2 { font-size: 1.8rem; font-weight: 700; color: white; }
+  p { color: ${CoresVizzo.textSecondary}; font-size: 0.9rem; margin-top: 4px; }
+`;
+
+const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const Label = styled.label`
+  color: ${CoresVizzo.textLabel};
+  font-weight: 600;
+  font-size: 13px;
+`;
+
+const InputFormGroup = styled.div`
+  background-color: ${CoresVizzo.inputBackground}; 
+  border: 1.5px solid ${CoresVizzo.inputBorder};
+  border-radius: 12px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  transition: all 0.2s ease-in-out;
+
+  &:focus-within {
+    border: 1.5px solid ${CoresVizzo.brandBlue};
+    box-shadow: 0 0 10px rgba(45, 121, 243, 0.25);
+  }
+`;
+
+const InputField = styled.input`
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  height: 100%;
+  color: white; 
+  font-size: 15px;
+  &:focus { outline: none; }
+`;
+
+const ButtonSubmit = styled.button`
+  margin-top: 10px;
+  background-color: ${CoresVizzo.brandBlue};
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  height: 50px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${CoresVizzo.blueHover}; 
+    box-shadow: 0 4px 15px rgba(45, 121, 243, 0.4);
+  }
+`;
+
+const ButtonGoogle = styled.button`
+  background-color: ${CoresVizzo.inputBackground};
+  border: 1.5px solid ${CoresVizzo.inputBorder};
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: ${CoresVizzo.brandOrange};
+    background-color: #2a2d2d;
+  }
+`;
+
+const DividerLine = styled.p`
+  display: flex;
+  align-items: center;
+  color: #5b5e68;
+  font-size: 12px;
+  margin: 6px 0;
+  &::before, &::after { content: ""; flex: 1; height: 1px; background: ${CoresVizzo.inputBorder}; margin: 0 12px; }
+`;
+
+const TextParagraph = styled.p`
+  text-align: center;
+  color: ${CoresVizzo.textSecondary};
+  font-size: 14px;
+`;
+
+const BlueSpan = styled.span`
+  color: ${CoresVizzo.brandBlue}; 
+  font-weight: 600;
+  cursor: pointer;
+  &:hover { color: ${CoresVizzo.brandOrange}; text-decoration: underline; }
+`;
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false)
 
   const handleGoogleLogin = async () => {
-    setLoading(true)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: 'http://localhost:5173/completar-cadastro'
-      }
-    })
-
-
-    if (error) {
-      alert('Erro ao entrar com Google: ' + error.message)
-    }
-    setLoading(false)
-  }
-
-
-  const handleLogin = () => {
-    setLoading(true);
-    handleVerificar()
+      options: { redirectTo: 'http://localhost:5173/completar-cadastro' }
+    });
+    if (error) alert('Erro: ' + error.message);
   };
 
-  const handleVerificar = async () => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  })
+  return (
+    <ScreenContainer>
+      <VisualSide>
+        <BrandTitle>VIZZO<span>.</span></BrandTitle>
+        <BrandDescription>
+          Conectando moradores, otimizando a administração e simplificando o ecossistema do seu condomínio em um único lugar.
+        </BrandDescription>
+      </VisualSide>
 
-  if (error || !data) {
-    alert('Email ou senha incorretos')
-    setLoading(false)
-    return
-  }
+      <FormSide>
+        <FormCard onSubmit={(e) => e.preventDefault()}>
+          <HeaderContainer>
+            <h2>Seja bem-vindo</h2>
+            <p>Insira seus dados para acessar a plataforma</p>
+          </HeaderContainer>
 
-    navigate("/home")
-  
-}
+          <FieldGroup>
+            <Label>E-mail</Label>
+            <InputFormGroup>
+              <InputField type="email" placeholder="Entre com seu melhor e-mail" />
+            </InputFormGroup>
+          </FieldGroup>
+          
+          <FieldGroup>
+            <Label>Senha</Label>
+            <InputFormGroup>
+              <InputField type="password" placeholder="Entre com sua senha" />
+            </InputFormGroup>
+          </FieldGroup>
 
-const inputStyle: React.CSSProperties = {
-  padding: '10px 14px',
-  borderRadius: 8,
-  border: '1px solid #ddd',
-  fontSize: 14,
-  outline: 'none',
-  width: '100%',
-  boxSizing: 'border-box',
-}
+          <ButtonSubmit type="submit">Entrar no Sistema</ButtonSubmit>
 
-const btnPrimaryStyle: React.CSSProperties = {
-  padding: '11px',
-  borderRadius: 8,
-  background: '#1a3a8f',
-  color: 'white',
-  border: 'none',
-  fontSize: 14,
-  fontWeight: 500,
-  cursor: 'pointer',
-}
+          <DividerLine>Ou</DividerLine>
 
-const btnOutlineStyle: React.CSSProperties = {
-  padding: '11px',
-  borderRadius: 8,
-  background: 'transparent',
-  color: '#1a3a8f',
-  border: '1px solid #1a3a8f',
-  fontSize: 14,
-  cursor: 'pointer',
-}
+          <ButtonGoogle type="button" onClick={handleGoogleLogin}>
+            <svg version="1.1" width="16" height="16" viewBox="0 0 512 512">
+              <path style={{ fill: '#FBBB00' }} d="M113.47,309.408L95.648,375.94l-65.139,1.378C11.042,341.211,0,299.9,0,256c0-42.451,10.324-82.483,28.624-117.732h0.014l57.992,10.632l25.404,57.644c-5.317,15.501-8.215,32.141-8.215,49.456C103.821,274.792,107.225,292.797,113.47,309.408z" />
+              <path style={{ fill: '#518EF8' }} d="M507.527,208.176C510.467,223.662,512,239.655,512,256c0,18.328-1.927,36.206-5.598,53.451c-12.462,58.683-45.025,109.925-90.134,146.187l-0.014-0.014l-73.044-3.727l-10.338-64.535c29.932-17.554,53.324-45.025,65.646-77.911h-136.89V208.176h138.887L507.527,208.176z" />
+              <path style={{ fill: '#28B446' }} d="M416.253,455.624l0.014,0.014C372.396,490.901,316.666,512,256,512c-97.491,0-182.252-54.491-225.491-134.681l82.961-67.91c21.619,57.698,77.278,98.771,142.53,98.771c28.047,0,54.323-7.582,76.87-20.818L416.253,455.624z" />
+              <path style={{ fill: '#F14336' }} d="M419.404,58.936l-82.933,67.896c-23.335-14.586-50.919-23.012-80.471-23.012c-66.729,0-123.429,42.957-143.965,102.724l-83.397-68.276h-0.014C71.23,56.123,157.06,0,256,0C318.115,0,375.068,22.126,419.404,58.936z" />
+            </svg>
+            Entrar com o Google
+          </ButtonGoogle>
 
-return (
-  <div style={{ maxWidth: 400, margin: '60px auto', padding: '0 20px' }}>
-    <h1 style={{ fontSize: 24, fontWeight: 600, color: '#1a3a8f', marginBottom: 4 }}>
-      Entrar
-    </h1>
-    <p style={{ fontSize: 14, color: '#888', marginBottom: 28 }}>
-      Bem-vindo de volta 👋
-    </p>
-
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={inputStyle}
-      />
-      <input
-        type="password"
-        placeholder="Senha"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={inputStyle}
-      />
-
-      <p
-        onClick={() => navigate('/forgotpassword')}
-        style={{ fontSize: 13, color: '#1a3a8f', textAlign: 'right', cursor: 'pointer', margin: 0 }}
-      >
-        Esqueci minha senha
-      </p>
-
-      <button onClick={handleLogin} disabled={loading} style={btnPrimaryStyle}>
-        {loading ? 'Entrando...' : 'Entrar'}
-      </button>
-
-      <button onClick={handleGoogleLogin} disabled={loading} style={btnOutlineStyle}>
-        {loading ? 'Entrando...' : 'Entrar com Google'}
-      </button>
-
-      <p style={{ fontSize: 13, color: '#888', textAlign: 'center', margin: 0 }}>
-        Não tem conta?{' '}
-        <span
-          onClick={() => navigate('/register')}
-          style={{ color: '#1a3a8f', cursor: 'pointer', fontWeight: 500 }}
-        >
-          Cadastre-se
-        </span>
-      </p>
-    </div>
-  </div>
-)
+          <TextParagraph>
+            Não tem uma conta? <BlueSpan onClick={() => navigate('/register')}>Cadastre-se</BlueSpan>
+          </TextParagraph>
+        </FormCard>
+      </FormSide>
+    </ScreenContainer>
+  );
 }
