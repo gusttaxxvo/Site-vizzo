@@ -16,5 +16,7 @@ export default defineConfig({
   },
   preview: {
     allowedHosts: ['vizzo-site.onrender.com']
-  }
+  },
+  // ISSO AQUI OBRIGA O VITE A ACEITAR SEU VÍDEO MP4 COMO UM ASSET VÁLIDO:
+  assetsInclude: ['**/*.mp4', '**/*.webm']
 })

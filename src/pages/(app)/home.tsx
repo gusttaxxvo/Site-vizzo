@@ -665,7 +665,7 @@ export default function Home() {
 
           <Dog style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             {/* Logo Mono da Vizzo aplicada de forma clean no encerramento */}
-            <VizzoFooterLogo src={logoVizzoMono} alt="Vizzo Co" />
+            <VizzoFooterLogo src={logoVizzo} alt="Vizzo" />
           </Dog>
 
         </PeZao>

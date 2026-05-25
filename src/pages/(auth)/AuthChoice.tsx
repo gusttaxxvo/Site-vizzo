@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { supabase } from '../../services/supabaseClient'; // Ajuste o caminho se necessário
+import React from 'react';
 
 // --- COMPONENTES ESTILIZADOS ---
 
@@ -16,6 +17,7 @@ const Container = styled.div`
   background-color: #0f1111;
 `;
 
+// Usando a tag video nativa com posicionamento fixo/absoluto cobrindo todo o fundo
 const VideoBackground = styled.video`
   position: absolute;
   top: 50%;
@@ -187,19 +189,19 @@ export default function AuthChoice() {
     }
   };
 
+  // Resolve a URL dinâmica do asset na pasta public sem quebrar as regras de import do Vite
+  const videoUrl = new URL('/predios.mp4', import.meta.url).href;
+
   return (
     <Container>
-      {/* Tag de vídeo configurada de forma super rígida para forçar a renderização web */}
+      {/* Forçando os atributos necessários para reprodução em plano de fundo sem travas do navegador */}
       <VideoBackground 
+        src={videoUrl}
         autoPlay 
         loop 
-        muted={true} 
-        playsInline 
-        preload="auto"
-      >
-        <source src="https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-ae9d-4e45-80cf-5b6fb9b1f9b3/78fcb976-02e0-47cb-95a7-96a921d7b1aa.mp4" type="video/mp4" />
-        Seu navegador não suporta vídeos.
-      </VideoBackground>
+        muted 
+        playsInline
+      />
       
       <Overlay />
 
